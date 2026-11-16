@@ -25,6 +25,9 @@ textarea{min-height:90px;resize:vertical}button{background:var(--green);color:#0
 </head>
 <body><div class="wrap">
 <header><h1>AliExpress Social Manual Pro</h1><p>إدارة المنتجات والمجموعات وتجهيز المنشورات يدوياً من هاتفك — أنت تراجع وتضغط نشر بنفسك.</p></header>
+ <div style="text-align:left;margin:10px 0">
+  <button id="langToggle" type="button" class="alt">English</button>
+ </div>
 <div class="grid">
  <div class="stat"><b id="countProducts">0</b>المنتجات</div><div class="stat"><b id="countGroups">0</b>المجموعات والصفحات</div><div class="stat"><b id="countQueue">0</b>في قائمة النشر</div>
 </div>
@@ -224,5 +227,20 @@ if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.
   });
 }
 </script>
+<script>
+const langButton = document.getElementById('langToggle');
 
+langButton.addEventListener('click', function () {
+  const isArabic = document.documentElement.lang === 'ar';
+
+  document.documentElement.lang = isArabic ? 'en' : 'ar';
+  document.documentElement.dir = isArabic ? 'ltr' : 'rtl';
+
+  langButton.textContent = isArabic ? 'العربية' : 'English';
+
+  document.querySelector('header p').textContent = isArabic
+    ? 'Manage products and groups, prepare posts, and publish manually from your phone.'
+    : 'إدارة المنتجات والمجموعات وتجهيز المنشورات — أنت تتحكم بالنشر بنفسك من هاتفك.';
+});
+</script>
 </body></html>
