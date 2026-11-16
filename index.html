@@ -115,7 +115,77 @@ function compressImage(file){
 }
 $('search').oninput=render;$('categoryFilter').onchange=render;$('sort').onchange=render;
 function current(){return products.find(p=>p.id===$('postProduct').value)}
-function makeCaption(){let p=current();if(!p)return;let link=p.url||'';let platform=$('platform').value;let disclosure='رابط تسويقي: قد أحصل على عمولة دون تكلفة إضافية عليك.';let text=platform==='pinterest'?`عنوان الـ Pin: ${p.title}\n\nالوصف: ${p.description}\n\nرابط الوجهة: ${link}\n\n${disclosure}`:platform==='instagram'?`${p.title}\n\n${p.description}\n\nاطلبه من الرابط: ${link}\n\n${disclosure}`:`${p.title}\n\n${p.description}\n\nشاهد المنتج: ${link}\n\nإفصاح: ${disclosure}`;$('caption').value=text.replace(/\\+n/g,'\n')
+function makeCaption(){
+function makeCaption() {
+  const p = current();
+
+  if (!p) {
+    alert('اختر منتجاً أولاً');
+    return;
+  }
+
+  const clean = value => String(value || '')
+    .replace(/\\+n/g, '\n')
+    .replace(/\r\n?/g, '\n')
+    .trim();
+
+  const title = clean(p.title);
+  const description = clean(p.description);
+  const price = clean(p.price);
+  const original = clean(p.original);
+  const link = clean(p.url);
+  const platform = $('platform').value;
+
+  const disclosure =
+    'إفصاح: هذا المنشور يحتوي على رابط تسويقي وقد أحصل على عمولة دون تكلفة إضافية عليك.';
+
+  const priceText = price
+    ? `💰 السعر: ${price}${original ? ` (السعر السابق: ${original})` : ''}`
+    : '';
+
+  let caption;
+
+  if (platform === 'pinterest') {
+    caption = [
+      `📌 ${title}`,
+      description,
+      priceText,
+      link ? `🛒 رابط المنتج: ${link}` : '',
+      disclosure
+    ].filter(Boolean).join('\n\n');
+
+  } else if (platform === 'instagram') {
+    caption = [
+      `✨ ${title}`,
+      description,
+      priceText,
+      link ? `🔗 رابط المنتج في البايو أو المنشور: ${link}` : '',
+      disclosure
+    ].filter(Boolean).join('\n\n');
+
+  } else if (platform === 'x') {
+    caption = [
+      title,
+      description,
+      priceText,
+      link,
+      disclosure
+    ].filter(Boolean).join('\n\n');
+
+  } else {
+    caption = [
+      `🔥 اكتشف هذا المنتج الرائع!`,
+      `✨ ${title}`,
+      description,
+      priceText,
+      link ? `🛒 شاهد المنتج من هنا:\n${link}` : '',
+      disclosure
+    ].filter(Boolean).join('\n\n');
+  }
+
+  $('caption').value = caption;
+}
+ 
 $('makeCaption').onclick=makeCaption;
 $('postProduct').onchange=makeCaption;$('platform').onchange=makeCaption;
 $('copyCaption').onclick=async()=>{try{await navigator.clipboard.writeText($('caption').value);alert('تم نسخ النص')}catch(e){$('caption').select();document.execCommand('copy');alert('إذا لم ينسخ تلقائياً، اضغط مطولاً ثم نسخ')}};
