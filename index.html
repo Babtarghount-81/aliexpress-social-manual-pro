@@ -115,7 +115,6 @@ function compressImage(file){
 }
 $('search').oninput=render;$('categoryFilter').onchange=render;$('sort').onchange=render;
 function current(){return products.find(p=>p.id===$('postProduct').value)}
-function makeCaption(){
 function makeCaption() {
   const p = current();
 
