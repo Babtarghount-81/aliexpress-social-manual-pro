@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AliExpress Manual Social Pro</title>
+<style>
+:root{--bg:#0b1220;--panel:#142238;--panel2:#0d192b;--line:#30435f;--txt:#eef4ff;--muted:#aebed3;--green:#19c99a;--blue:#67a8ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);font:15px system-ui}.wrap{max-width:1100px;margin:auto;padding:14px}
+header{padding:12px 2px}h1{font-size:24px;margin:0 0 6px}h2{font-size:18px;margin:0 0 12px}p{color:var(--muted);line-height:1.65;margin:6px 0}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:14px;margin:12px 0}
+input,select,textarea,button{font:inherit;padding:10px;border-radius:9px;border:1px solid #405572;background:var(--panel2);color:var(--txt);max-width:100%;width:100%;margin:4px 0}
+textarea{min-height:90px;resize:vertical}button{background:var(--green);color:#06251d;font-weight:700;border:0;cursor:pointer;width:auto;padding:10px 14px}button.alt{background:#284568;color:white;border:1px solid #49688e}button.danger{background:#793b49;color:white}button:disabled{opacity:.45}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row>*{flex:1;min-width:130px}
+.tabs{display:flex;gap:6px;overflow:auto;margin:10px 0}.tabs button{white-space:nowrap}.tabs button.active{background:var(--blue);color:#06172b}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}.card{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px;min-width:0}.card img{width:100%;height:145px;object-fit:contain;background:white;border-radius:8px}.card h3{font-size:15px;margin:8px 0}.muted{color:var(--muted);font-size:13px}.price{color:#6ee7b7;font-weight:800;font-size:18px}.hidden{display:none!important}.tag{display:inline-block;background:#233c59;padding:3px 8px;border-radius:20px;font-size:12px;margin:2px}.stat{background:var(--panel2);border:1px solid var(--line);padding:12px;border-radius:10px}.stat b{display:block;font-size:22px;color:var(--green)}.queueitem{display:flex;gap:8px;align-items:center;border-bottom:1px solid var(--line);padding:8px 0}.queueitem img{width:54px;height:54px;object-fit:contain;background:white;border-radius:7px}.queueitem .grow{flex:1;min-width:0}.notice{background:#263c56;padding:10px;border-radius:9px;color:#e5efff}.small{font-size:12px}
+</style>
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="theme-color" content="#0b1220">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" href="./icons/icon-192.png">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+
+</head>
+<body><div class="wrap">
+<header><h1>AliExpress Social Manual Pro</h1><p>إدارة المنتجات والمجموعات وتجهيز المنشورات يدوياً من هاتفك — أنت تراجع وتضغط نشر بنفسك.</p></header>
+<div class="grid">
+ <div class="stat"><b id="countProducts">0</b>المنتجات</div><div class="stat"><b id="countGroups">0</b>المجموعات والصفحات</div><div class="stat"><b id="countQueue">0</b>في قائمة النشر</div>
+</div>
+<div class="tabs">
+<button class="active" data-tab="products">المنتجات</button><button class="alt" data-tab="groups">المجموعات</button><button class="alt" data-tab="planner">قائمة النشر</button><button class="alt" data-tab="backup">النسخ الاحتياطي</button>
+</div>
+<section id="products" class="tab">
+<div class="box"><h2>1) استيراد ملف CSV</h2><p>الأعمدة المدعومة: Product Image, Product Title, Description, Price, Original Price, Product URL, Affiliate URL, Category, Rating. ويمكنك أيضاً اختيار صورة مباشرة من معرض هاتفك من بطاقة المنتج.</p>
+<div class="row"><input type="file" id="csvFile" accept=".csv,text/csv"><button id="sampleBtn" class="alt">تنزيل CSV تجريبي</button></div>
+<div class="row"><input id="search" placeholder="ابحث عن منتج أو فئة"><select id="categoryFilter"><option value="">كل الفئات</option></select><select id="sort"><option value="new">الأحدث</option><option value="title">الاسم</option><option value="price">السعر</option></select></div>
+</div>
+<div class="box"><h2>2) المنتجات</h2><div class="row"><button id="addSelected">أضف المحدد إلى قائمة النشر</button><button id="selectVisible" class="alt">تحديد الظاهر</button><button id="clearSelection" class="alt">إلغاء التحديد</button></div><div id="productCards" class="cards"></div></div>
+</section>
+<section id="groups" class="tab hidden">
+<div class="box"><h2>إدارة مجموعات Facebook والصفحات</h2><p>أدخل اسم المجموعة ورابطها. احفظ فقط المجموعات التي تسمح بالنشر وفق قواعدها.</p>
+<div class="grid"><input id="groupName" placeholder="اسم المجموعة أو الصفحة"><input id="groupUrl" placeholder="رابط المجموعة أو الصفحة https://..."></div><button id="saveGroup">حفظ المجموعة</button><div id="groupList"></div></div>
+</section>
+<section id="planner" class="tab hidden">
+<div class="box"><h2>قائمة النشر اليدوي</h2><p>جهّز منشوراتك بالتتابع. افتح المجموعة، انسخ النص، أرفق الصورة يدوياً، ثم اضغط نشر داخل المنصة.</p><div id="queueList"></div><button id="clearQueue" class="danger">مسح قائمة النشر</button></div>
+<div class="box"><h2>مركز تجهيز المنشور</h2><div class="grid"><div><label>المنتج</label><select id="postProduct"></select></div><div><label>الوجهة</label><select id="postGroup"></select></div><div><label>المنصة</label><select id="platform"><option value="facebook">Facebook</option><option value="x">X / Twitter</option><option value="instagram">Instagram</option><option value="pinterest">Pinterest</option></select></div></div>
+<label>نص المنشور</label><textarea id="caption"></textarea><div class="row"><button id="makeCaption" class="alt">إنشاء نص مقترح</button><button id="copyCaption">نسخ النص</button><button id="openTarget">فتح الوجهة</button></div>
+<div class="row"><button id="openProduct">فتح رابط المنتج / الأفلييت</button><button id="openImage" class="alt">فتح الصورة</button><button id="markDone" class="alt">تحديد كمكتمل</button></div>
+<div class="notice small">ملاحظة: لا يتم النشر تلقائياً. في Pinterest افتح أداة إنشاء Pin، وارفع صورة المنتج، ثم انسخ العنوان والوصف والرابط إلى الحقول المناسبة. Facebook وInstagram يتطلبان إرفاق الصورة ولصق النص يدوياً. زر X يفتح نافذة كتابة النص فقط؛ أرفق الصورة بنفسك إذا أردت.</div>
+</div>
+</section>
+<section id="backup" class="tab hidden">
+<div class="box"><h2>النسخ الاحتياطي ونقل البيانات</h2><p>احفظ نسخة JSON دورياً حتى لا تفقد منتجاتك ومجموعاتك وقائمة النشر عند تغيير المتصفح أو الهاتف.</p><div class="row"><button id="exportBackup">تصدير نسخة احتياطية JSON</button><label class="alt" style="padding:10px;border-radius:9px;background:#284568">استيراد نسخة JSON <input id="importBackup" type="file" accept=".json" style="display:block"></label></div><button id="exportCsv" class="alt">تصدير المنتجات CSV</button><button id="resetAll" class="danger">حذف كل البيانات من هذا الجهاز</button></div>
+</section>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+let products=JSON.parse(localStorage.getItem('am_products')||'[]'), groups=JSON.parse(localStorage.getItem('am_groups')||'[]'), queue=JSON.parse(localStorage.getItem('am_queue')||'[]'), selected=new Set();
+const save=()=>{localStorage.setItem('am_products',JSON.stringify(products));localStorage.setItem('am_groups',JSON.stringify(groups));localStorage.setItem('am_queue',JSON.stringify(queue));render()};
+const val=(o,...keys)=>{for(const k of keys){let x=o[k];if(x!==undefined&&x!==null&&String(x).trim()!=='')return String(x).trim()}return ''};
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function parseCSV(t){let rows=[],row=[],v='',q=false;for(let i=0;i<t.length;i++){let c=t[i];if(c==='"'&&q&&t[i+1]==='"'){v+='"';i++}else if(c==='"')q=!q;else if(c===','&&!q){row.push(v);v=''}else if((c==='\n'||c==='\r')&&!q){if(c==='\r'&&t[i+1]==='\n')i++;row.push(v);if(row.some(x=>x.trim()))rows.push(row);row=[];v=''}else v+=c}row.push(v);if(row.some(x=>x.trim()))rows.push(row);let h=rows.shift().map(x=>x.trim().toLowerCase());return rows.map(r=>{let o={};h.forEach((k,i)=>o[k]=(r[i]||'').trim());return {id:crypto.randomUUID(),image:val(o,'product image','image','image url','image_url'),title:val(o,'product title','title','name'),description:val(o,'description','product description'),price:val(o,'price'),original:val(o,'original price','original_price'),url:val(o,'affiliate url','affiliate_url','product url','url'),category:val(o,'category','niche'),rating:val(o,'rating')}}).filter(p=>p.title)};
+$('csvFile').onchange=async e=>{let f=e.target.files[0];if(!f)return;let t=await f.text();let a=parseCSV(t);products=[...products,...a];save();alert('تم استيراد '+a.length+' منتج')};
+$('sampleBtn').onclick=()=>download('AliExpress_Sample.csv','Product Image,Product Title,Description,Price,Original Price,Product URL,Affiliate URL,Category,Rating\nhttps://placehold.co/600x400,Portable Desk Lamp,Compact rechargeable lamp,12.99,19.99,https://example.com/product,https://example.com/affiliate,Home,4.8');
+function download(name,txt){let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain;charset=utf-8'}));a.download=name;a.click();URL.revokeObjectURL(a.href)}
+function render(){ $('countProducts').textContent=products.length;$('countGroups').textContent=groups.length;$('countQueue').textContent=queue.length;
+let cats=[...new Set(products.map(p=>p.category).filter(Boolean))],old=$('categoryFilter').value;$('categoryFilter').innerHTML='<option value="">كل الفئات</option>'+cats.map(c=>`<option>${esc(c)}</option>`).join('');$('categoryFilter').value=cats.includes(old)?old:'';
+let term=$('search').value.toLowerCase(),cat=$('categoryFilter').value,arr=products.filter(p=>(!cat||p.category===cat)&&(`${p.title} ${p.description} ${p.category}`).toLowerCase().includes(term));if($('sort').value==='title')arr.sort((a,b)=>a.title.localeCompare(b.title));if($('sort').value==='price')arr.sort((a,b)=>(parseFloat(a.price)||0)-(parseFloat(b.price)||0));
+$('productCards').innerHTML=arr.map(p=>`<div class="card"><label><input type="checkbox" data-select="${p.id}" ${selected.has(p.id)?'checked':''} style="width:auto"> تحديد</label>${p.image?`<img src="${esc(p.image)}" onerror="this.style.display='none'">`:''}<h3>${esc(p.title)}</h3><div class="price">${esc(p.price)}</div><p class="muted">${esc(p.category)} ${p.rating?'· ★ '+esc(p.rating):''}</p><p class="muted">${esc(p.description)}</p><div class="row"><button onclick="addQueue('${p.id}')">أضف للقائمة</button><button class="alt" onclick="editProduct('${p.id}')">تعديل</button><button class="danger" onclick="delProduct('${p.id}')">حذف</button></div><label class="small" style="display:block;margin-top:8px">إضافة / تغيير صورة من الهاتف<input type="file" accept="image/*" data-image-upload="${p.id}" style="width:100%"></label></div>`).join('')||'<p>لا توجد منتجات. استورد ملف CSV للبدء.</p>';
+$('groupList').innerHTML=groups.map(g=>`<div class="queueitem"><div class="grow"><b>${esc(g.name)}</b><div class="muted">${esc(g.url)}</div></div><button class="alt" onclick="delGroup('${g.id}')">حذف</button></div>`).join('');
+$('postProduct').innerHTML=products.map(p=>`<option value="${p.id}">${esc(p.title)}</option>`).join('');$('postGroup').innerHTML='<option value="">اختر الوجهة</option>'+groups.map(g=>`<option value="${g.id}">${esc(g.name)}</option>`).join('');
+$('queueList').innerHTML=queue.map((q,i)=>{let p=products.find(x=>x.id===q.pid),g=groups.find(x=>x.id===q.gid);return `<div class="queueitem">${p&&p.image?`<img src="${esc(p.image)}">`:''}<div class="grow"><b>${esc(p?p.title:'منتج محذوف')}</b><div class="muted">${esc(g?g.name:'لم تحدد وجهة')} · ${q.done?'مكتمل':'بانتظار النشر'}</div></div><button class="alt" onclick="loadQueue(${i})">تجهيز</button><button class="danger" onclick="removeQueue(${i})">×</button></div>`}).join('')||'<p>القائمة فارغة.</p>';
+}
+window.addQueue=id=>{if(!queue.some(q=>q.pid===id&&!q.done))queue.push({pid:id,gid:'',done:false});save()};
+window.delProduct=id=>{if(confirm('حذف المنتج؟')){products=products.filter(p=>p.id!==id);selected.delete(id);save()}};
+window.delGroup=id=>{groups=groups.filter(g=>g.id!==id);save()};
+window.removeQueue=i=>{queue.splice(i,1);save()};
+window.loadQueue=i=>{let q=queue[i];$('postProduct').value=q.pid;$('postGroup').value=q.gid||'';makeCaption();document.querySelector('[data-tab="planner"]').click();window.scrollTo(0,document.body.scrollHeight)};
+window.editProduct=id=>{let p=products.find(x=>x.id===id),title=prompt('العنوان',p.title);if(title===null)return;p.title=title;p.price=prompt('السعر',p.price)||p.price;p.url=prompt('رابط الأفلييت',p.url)||p.url;save()};
+$('saveGroup').onclick=()=>{let name=$('groupName').value.trim(),url=$('groupUrl').value.trim();if(!name||!/^https?:\/\//i.test(url)){alert('أدخل الاسم ورابطاً يبدأ بـ https://');return}groups.push({id:crypto.randomUUID(),name,url});$('groupName').value=$('groupUrl').value='';save()};
+$('addSelected').onclick=()=>{selected.forEach(id=>{if(!queue.some(q=>q.pid===id&&!q.done))queue.push({pid:id,gid:'',done:false})});selected.clear();save()};
+$('selectVisible').onclick=()=>document.querySelectorAll('[data-select]').forEach(x=>{x.checked=true;selected.add(x.dataset.select)});
+$('clearSelection').onclick=()=>{selected.clear();render()};
+$('productCards').onchange=async e=>{
+let id=e.target.dataset.select;
+if(id){e.target.checked?selected.add(id):selected.delete(id);return}
+let pid=e.target.dataset.imageUpload, file=e.target.files&&e.target.files[0];
+if(pid&&file){
+ if(!file.type.startsWith('image/')){alert('اختر ملف صورة صالحاً');return}
+ try{
+  const data=await compressImage(file);
+  const p=products.find(x=>x.id===pid);if(!p)return;
+  p.image=data;save();alert('تم ربط الصورة بالمنتج وحفظها على هذا الجهاز');
+ }catch(err){alert('تعذر معالجة الصورة. جرّب صورة أخرى')}
+}
+};
+function compressImage(file){
+ return new Promise((resolve,reject)=>{
+  const reader=new FileReader();
+  reader.onerror=reject;
+  reader.onload=()=>{
+   const img=new Image();img.onerror=reject;
+   img.onload=()=>{
+    const max=700,scale=Math.min(1,max/Math.max(img.width,img.height));
+    const canvas=document.createElement('canvas');
+    canvas.width=Math.max(1,Math.round(img.width*scale));canvas.height=Math.max(1,Math.round(img.height*scale));
+    canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
+    resolve(canvas.toDataURL('image/jpeg',0.68));
+   };
+   img.src=reader.result;
+  };
+  reader.readAsDataURL(file);
+ });
+}
+$('search').oninput=render;$('categoryFilter').onchange=render;$('sort').onchange=render;
+function current(){return products.find(p=>p.id===$('postProduct').value)}
+function makeCaption(){let p=current();if(!p)return;let link=p.url||'';let platform=$('platform').value;let disclosure='رابط تسويقي: قد أحصل على عمولة دون تكلفة إضافية عليك.';let text=platform==='pinterest'?`عنوان الـ Pin: ${p.title}\n\nالوصف: ${p.description}\n\nرابط الوجهة: ${link}\n\n${disclosure}`:platform==='instagram'?`${p.title}\n\n${p.description}\n\nاطلبه من الرابط: ${link}\n\n${disclosure}`:`${p.title}\n\n${p.description}\n\nشاهد المنتج: ${link}\n\nإفصاح: ${disclosure}`;$('caption').value=text}
+$('makeCaption').onclick=makeCaption;
+$('postProduct').onchange=makeCaption;$('platform').onchange=makeCaption;
+$('copyCaption').onclick=async()=>{try{await navigator.clipboard.writeText($('caption').value);alert('تم نسخ النص')}catch(e){$('caption').select();document.execCommand('copy');alert('إذا لم ينسخ تلقائياً، اضغط مطولاً ثم نسخ')}};
+$('openTarget').onclick=()=>{let platform=$('platform').value;let g=groups.find(x=>x.id===$('postGroup').value);if(platform==='x'){let t=encodeURIComponent($('caption').value);window.open('https://twitter.com/intent/tweet?text='+t,'_blank');return}if(platform==='pinterest'){window.open('https://www.pinterest.com/pin-creation-tool/','_blank');return}if(g)window.open(g.url,'_blank');else alert('اختر وجهة أولاً')};
+$('openProduct').onclick=()=>{let p=current();if(p&&p.url)window.open(p.url,'_blank');else alert('لا يوجد رابط أفلييت')};
+$('openImage').onclick=()=>{let p=current();if(p&&p.image)window.open(p.image,'_blank');else alert('لا توجد صورة')};
+$('markDone').onclick=()=>{let p=current(),g=$('postGroup').value,q=queue.find(x=>x.pid===p?.id&&!x.done);if(q){q.gid=g;q.done=true;save();alert('تم تحديث الحالة محلياً')}else alert('المنتج ليس في قائمة النشر')};
+$('clearQueue').onclick=()=>{if(confirm('مسح قائمة النشر؟')){queue=[];save()}};
+document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.add('hidden'));$(b.dataset.tab).classList.remove('hidden');document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b))});
+$('exportBackup').onclick=()=>download('Social-Manual-Pro-Backup.json',JSON.stringify({products,groups,queue},null,2));
+$('importBackup').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let d=JSON.parse(await f.text());products=d.products||[];groups=d.groups||[];queue=d.queue||[];save();alert('تم استيراد النسخة')}catch(err){alert('ملف JSON غير صالح')}};
+$('exportCsv').onclick=()=>{let keys=['image','title','description','price','original','url','category','rating'];let head=['Product Image','Product Title','Description','Price','Original Price','Affiliate URL','Category','Rating'];let csv=[head,...products.map(p=>keys.map(k=>p[k]||''))].map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');download('Products-Export.csv',csv)};
+$('resetAll').onclick=()=>{if(confirm('تحذير: سيتم حذف كل المنتجات والمجموعات والقائمة من هذا المتصفح. هل أنت متأكد؟')){products=[];groups=[];queue=[];save()}};
+render();
+</script>
+<script>
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(err => console.log('Service worker registration failed', err));
+  });
+}
+</script>
+
+</body></html>
