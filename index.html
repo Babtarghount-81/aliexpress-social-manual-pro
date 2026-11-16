@@ -115,7 +115,7 @@ function compressImage(file){
 }
 $('search').oninput=render;$('categoryFilter').onchange=render;$('sort').onchange=render;
 function current(){return products.find(p=>p.id===$('postProduct').value)}
-function makeCaption(){let p=current();if(!p)return;let link=p.url||'';let platform=$('platform').value;let disclosure='رابط تسويقي: قد أحصل على عمولة دون تكلفة إضافية عليك.';let text=platform==='pinterest'?`عنوان الـ Pin: ${p.title}\n\nالوصف: ${p.description}\n\nرابط الوجهة: ${link}\n\n${disclosure}`:platform==='instagram'?`${p.title}\n\n${p.description}\n\nاطلبه من الرابط: ${link}\n\n${disclosure}`:`${p.title}\n\n${p.description}\n\nشاهد المنتج: ${link}\n\nإفصاح: ${disclosure}`;$('caption').value=text.replace(/\\n/g,'\n')
+function makeCaption(){let p=current();if(!p)return;let link=p.url||'';let platform=$('platform').value;let disclosure='رابط تسويقي: قد أحصل على عمولة دون تكلفة إضافية عليك.';let text=platform==='pinterest'?`عنوان الـ Pin: ${p.title}\n\nالوصف: ${p.description}\n\nرابط الوجهة: ${link}\n\n${disclosure}`:platform==='instagram'?`${p.title}\n\n${p.description}\n\nاطلبه من الرابط: ${link}\n\n${disclosure}`:`${p.title}\n\n${p.description}\n\nشاهد المنتج: ${link}\n\nإفصاح: ${disclosure}`;$('caption').value=text.replace(/\\+n/g,'\n')
 $('makeCaption').onclick=makeCaption;
 $('postProduct').onchange=makeCaption;$('platform').onchange=makeCaption;
 $('copyCaption').onclick=async()=>{try{await navigator.clipboard.writeText($('caption').value);alert('تم نسخ النص')}catch(e){$('caption').select();document.execCommand('copy');alert('إذا لم ينسخ تلقائياً، اضغط مطولاً ثم نسخ')}};
