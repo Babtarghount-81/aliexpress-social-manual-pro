@@ -63,7 +63,24 @@ function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&l
 function parseCSV(t){let rows=[],row=[],v='',q=false;for(let i=0;i<t.length;i++){let c=t[i];if(c==='"'&&q&&t[i+1]==='"'){v+='"';i++}else if(c==='"')q=!q;else if(c===','&&!q){row.push(v);v=''}else if((c==='\n'||c==='\r')&&!q){if(c==='\r'&&t[i+1]==='\n')i++;row.push(v);if(row.some(x=>x.trim()))rows.push(row);row=[];v=''}else v+=c}row.push(v);if(row.some(x=>x.trim()))rows.push(row);let h=rows.shift().map(x=>x.trim().toLowerCase());return rows.map(r=>{let o={};h.forEach((k,i)=>o[k]=(r[i]||'').trim());return {id:crypto.randomUUID(),image:val(o,'product image','image','image url','image_url'),title:val(o,'product title','title','name'),description:val(o,'description','product description'),price:val(o,'price'),original:val(o,'original price','original_price'),url:val(o,'affiliate url','affiliate_url','product url','url'),category:val(o,'category','niche'),rating:val(o,'rating')}}).filter(p=>p.title)};
 $('csvFile').onchange=async e=>{let f=e.target.files[0];if(!f)return;let t=await f.text();let a=parseCSV(t);products=[...products,...a];save();alert('تم استيراد '+a.length+' منتج')};
 $('sampleBtn').onclick=()=>download('AliExpress_Sample.csv','Product Image,Product Title,Description,Price,Original Price,Product URL,Affiliate URL,Category,Rating\nhttps://placehold.co/600x400,Portable Desk Lamp,Compact rechargeable lamp,12.99,19.99,https://example.com/product,https://example.com/affiliate,Home,4.8');
-function download(name,txt){let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain;charset=utf-8'}));a.download=name;a.click();URL.revokeObjectURL(a.href)}
+
+function download(name, txt) {
+  const blob = new Blob([txt], {
+    type: 'text/plain;charset=utf-8'
+  });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+
+  setTimeout(() => {
+    URL.revokeObjectURL(url);
+  }, 2000);
+}
+
 function render(){ $('countProducts').textContent=products.length;$('countGroups').textContent=groups.length;$('countQueue').textContent=queue.length;
 let cats=[...new Set(products.map(p=>p.category).filter(Boolean))],old=$('categoryFilter').value;$('categoryFilter').innerHTML='<option value="">كل الفئات</option>'+cats.map(c=>`<option>${esc(c)}</option>`).join('');$('categoryFilter').value=cats.includes(old)?old:'';
 let term=$('search').value.toLowerCase(),cat=$('categoryFilter').value,arr=products.filter(p=>(!cat||p.category===cat)&&(`${p.title} ${p.description} ${p.category}`).toLowerCase().includes(term));if($('sort').value==='title')arr.sort((a,b)=>a.title.localeCompare(b.title));if($('sort').value==='price')arr.sort((a,b)=>(parseFloat(a.price)||0)-(parseFloat(b.price)||0));
