@@ -1,4 +1,4 @@
-const CACHE_NAME = 'aliexpress-social-manual-pro-21';
+const CACHE_NAME = 'aliexpress-social-manual-pro-22';
 const ASSETS = ['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS)));
